@@ -12,23 +12,31 @@ function f = plotLFPpower(F, allPowerEst, dispRange, marginalChans, freqBands)
 dispF = F>dispRange(1) & F<=dispRange(2);
 nC = size(allPowerEst,1); 
 
-f = figure;
-subplot(4,4,[5 6 7 9 10 11 13 14 15]);
+% f = figure;
+subax=subplot(4,4,[5 6 7 9 10 11 13 14 15]);
 imagesc(F(dispF), (0:nC-1)*10, 10*log10(allPowerEst(:,dispF)));
 xlim(dispRange);
-xlabel('frequency (Hz)');
+colorlimits=clim;
+clim([-10 30])
+xlim([0 60])
+xlabel('Frequency (Hz)');
 set(gca, 'YDir', 'normal');
-ylabel('depth on probe (µm)');
+ylabel('Depth on probe (µm)');
 % h = colorbar;
 % h.Label.String = 'power (dB)';
 makepretty
+axis ij
+box off;
+fontsize(subax,24,'points')
 
 ax = subplot(4,4,1:3); hold on;
 set(ax, 'ColorOrder', copper(length(marginalChans)));
 plot(F(dispF), 10*log10(allPowerEst(marginalChans,dispF)));
 ylabel('power (dB)');
 set(ax, 'XTick', []);
-hleg = legend(array2stringCell(marginalChans*10));
+% hleg = legend(array2stringCell(marginalChans*10));
+hleg = legend(arrayfun(@num2str, marginalChans, 'un', 0));
+legend box off
 set(hleg, 'Position', [0.7125    0.7607    0.1036    0.2083]);
 makepretty;
 
@@ -45,5 +53,6 @@ set(ax, 'YTick', []);
 ylim([0 nC(end)*10])
 xlabel('power (dB)');
 h = legend(cellfun(@(x)sprintf('%.1f - %.1f Hz', x(1), x(2)), freqBands, 'uni', false));
+legend box off
 set(h, 'Position', [ 0.8071    0.7356    0.0980    0.1009]);
 makepretty;
